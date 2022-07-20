@@ -19,7 +19,7 @@ export function initializeRouter(url: string): RoutingState {
 // safely get the window object
 export function getWindow(): Window | undefined {
     if (!isServer) {
-        return document?.defaultView?.window
+        return typeof window === 'object' ? window : undefined
     }
     return undefined;
 }
@@ -56,7 +56,7 @@ export function setRoutingState(routingState: RoutingState, path: string): void 
 // this will retrieve the routingstate by the path (the current url)
 export function getRoutingStateByPath(path: string): RoutingState {
     const url = new URL(path);
-    const segments = url.pathname?.split('/');
+    const segments = url.pathname.split('/');
     segments.splice(0, 1);
     return {
         url: path,
@@ -65,10 +65,9 @@ export function getRoutingStateByPath(path: string): RoutingState {
 }
 
 export function getMatchingConfig(segments: string[], config: RoutingConfig): RoutingConfigItem {
-    for (let i = 0; i < routingConfig.length; i++) {
-        if (segmentsMatch(segments, config[i])) {
-            return config[i];
-        }
+    const found = config.find(item => segmentsMatch(segments, item))
+    if (found) {
+        return found;
     }
     return null;
 }
@@ -83,11 +82,12 @@ export function segmentsMatch(pathSegments: string[], configItem: RoutingConfigI
     });
     return matches.length === pathSegments.length;
 }
+
 export function getParams(routingState: RoutingState): { [key: string]: string } {
     const matchingConfig = getMatchingConfig(routingState.segments, routingConfig);
     const params = matchingConfig.path.split('/')
         .map((segment: string, index: number) => {
-            if (segment.indexOf(':') === 0) {
+            if (segment.startsWith(':')) {
                 return {
                     index,
                     paramName: segment.replace(':', '')

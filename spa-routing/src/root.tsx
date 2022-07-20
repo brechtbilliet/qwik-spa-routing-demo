@@ -2,7 +2,7 @@ import { App } from './containers/app/app';
 
 import './global.css';
 
-export default (opts: { url:  | string }) => {
+export default (opts: { url:  string }) => {
   return (
     <html>
       <head>
