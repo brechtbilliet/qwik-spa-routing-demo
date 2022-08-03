@@ -5,10 +5,10 @@ import {routingConfig} from '../routing-config';
 
 export const RouterOutlet = component$(
     () => {
-        const routing = useContext(ROUTING);
+        const routingState = useContext(ROUTING);
         useClientEffect$(() => {
-            listenToRouteChanges(routing);
+            listenToRouteChanges(routingState);
         });
-        return getMatchingConfig(routing.segments, routingConfig)?.component
+        return getMatchingConfig(routingState.segments, routingConfig)?.component
     }
 );

@@ -29,7 +29,7 @@ export function navigateTo(path: string, routingState: RoutingState): void {
         // we don't actually navigate, we just push a new state to
         // the history object
         getWindow()?.history?.pushState({page: path}, path, path);
-        setRoutingState(routingState, path);
+        setRoutingState(path, routingState);
     }
 }
 
@@ -39,12 +39,12 @@ export function listenToRouteChanges(routingState: RoutingState): void {
         // we want to set the routing state
         getWindow()?.addEventListener('popstate', (e) => {
             const path = e.state.page;
-            setRoutingState(routingState, path);
+            setRoutingState(path, routingState);
         })
     }
 }
 
-export function setRoutingState(routingState: RoutingState, path: string): void {
+export function setRoutingState(path: string, routingState: RoutingState): void {
     const oldUrl = new URL(routingState.url);
     const newUrl = new URL(oldUrl.origin + path);
     const {segments, url} = getRoutingStateByPath(newUrl.toString())
